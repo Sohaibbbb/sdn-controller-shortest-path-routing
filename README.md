@@ -2,79 +2,15 @@
 
 A Software-Defined Networking (SDN) controller which implements shortest-path routing in a packet-switched network.
 
-
-i) How Far I Got
-----------------
-* I completed all project requirements - managed to get Floodlight to install shortest-path routes in the switches, for all topology types in the static case, and in the dynamic case as well. Works perfectly with all topologies mentioned in the project description.
-
-ii) Changes Made to Controller
-------------------------------
-1. I used Dijkstra's shortest path algorithm, to compute shortest paths from a given switch to every other switch in the network. I used the implementation provided by 'Baeldung' (https://www.baeldung.com/java-dijkstra) to compute shortest paths. This implementation provided an interface for defining nodes and connections in a graph. 
-
-2. In the deviceAdded() function (in ShortestPathSwitching.java), I initially got the newly added host's information, and iterated through all switches, computing the shortest path to get to this host's switch, in each case. I had to 'translate' the node information in the controller, to make it compatible with the interface of Baeldung's Dijkstra implementation. And for each switch, I used the obtained shortest path information to know what the optimal 'next-hop' switch was. After this, I simply added a rule with the host's MAC address (as the matching criteria) and the port through which the current switch is connected to the next-hop switch (as the action). 
-
-3. In the deviceRemoved() function, I iterated through each switch, removing the rule associated with the host (which got removed).
-
-4. In the deviceMoved() function, I did the same procedure as in 1, updating the route in each node for the moved device.
-
-5. In the switchRemoved() function, I chose to update the entire topology, after a switch was removed. I iterated through each host, and followed 1 for each host. 
-
-6. Same as above was done in the linkDiscovery update function. I chose to update the entire topology, in the case that a link was changed.   
-
-iii) Switch Flow Tables - Sample Output
----------------------------------------
-
-'someloops' topology:
---------------------
-
-Static Case
------------
-
-someloops - s1
---------------------
-mininet@mininet-VirtualBox:~/openflow$ sudo ovs-ofctl dump-flows s1 -O OpenFlow13
-OFPST_FLOW reply (OF1.3) (xid=0x2):
- cookie=0x0, duration=9.678s, table=0, n_packets=2, n_bytes=196, priority=1,ip,dl_dst=00:00:00:00:00:03 actions=output:3
- cookie=0x0, duration=9.688s, table=0, n_packets=6, n_bytes=588, priority=1,ip,dl_dst=00:00:00:00:00:01 actions=output:1
- cookie=0x0, duration=9.722s, table=0, n_packets=2, n_bytes=196, priority=1,ip,dl_dst=00:00:00:00:00:04 actions=output:3
- cookie=0x0, duration=9.726s, table=0, n_packets=2, n_bytes=196, priority=1,ip,dl_dst=00:00:00:00:00:02 actions=output:2
-
-someloops - s6
---------------
-mininet@mininet-VirtualBox:~/openflow$ sudo ovs-ofctl dump-flows s6 -O OpenFlow13
-OFPST_FLOW reply (OF1.3) (xid=0x2):
- cookie=0x0, duration=41.566s, table=0, n_packets=4, n_bytes=392, priority=1,ip,dl_dst=00:00:00:00:00:03 actions=output:3
- cookie=0x0, duration=41.594s, table=0, n_packets=4, n_bytes=392, priority=1,ip,dl_dst=00:00:00:00:00:01 actions=output:4
- cookie=0x0, duration=41.597s, table=0, n_packets=6, n_bytes=588, priority=1,ip,dl_dst=00:00:00:00:00:04 actions=output:1
- cookie=0x0, duration=41.602s, table=0, n_packets=2, n_bytes=196, priority=1,ip,dl_dst=00:00:00:00:00:02 actions=output:3
-
-Dynamic Case
--------------
-
-someloops - s4 - link between s4 and h3 is down
------------------------------------------------
-mininet@mininet-VirtualBox:~/openflow$ sudo ovs-ofctl dump-flows s4 -O OpenFlow13
-OFPST_FLOW reply (OF1.3) (xid=0x2):
- cookie=0x0, duration=8.903s, table=0, n_packets=2, n_bytes=196, priority=1,ip,dl_dst=00:00:00:00:00:01 actions=output:4
- cookie=0x0, duration=8.905s, table=0, n_packets=4, n_bytes=392, priority=1,ip,dl_dst=00:00:00:00:00:04 actions=output:4
- cookie=0x0, duration=8.906s, table=0, n_packets=4, n_bytes=392, priority=1,ip,dl_dst=00:00:00:00:00:02 actions=output:3
-
-someloops - s4 - link between s4 and h3 is up again
----------------------------------------------------
-mininet@mininet-VirtualBox:~/openflow$ sudo ovs-ofctl dump-flows s4 -O OpenFlow13
-OFPST_FLOW reply (OF1.3) (xid=0x2):
- cookie=0x0, duration=2.369s, table=0, n_packets=0, n_bytes=0, priority=1,ip,dl_dst=00:00:00:00:00:03 actions=output:1
- cookie=0x0, duration=2.552s, table=0, n_packets=2, n_bytes=196, priority=1,ip,dl_dst=00:00:00:00:00:01 actions=output:4
- cookie=0x0, duration=2.552s, table=0, n_packets=4, n_bytes=392, priority=1,ip,dl_dst=00:00:00:00:00:04 actions=output:4
- cookie=0x0, duration=2.552s, table=0, n_packets=4, n_bytes=392, priority=1,ip,dl_dst=00:00:00:00:00:02 actions=output:3
-
 ---
 
 ## About
 
-An SDN controller tool built using Floodlight, programmed to ensure shortest-path routing which works with different types of network topologies. This implementation is tested using the Mininet network emulator, which is designed to emulate various topologies containing OpenFlow switches, each of which connect to an OpenFlow network controller. This SDN implementation works successfully with various network topologies, and is also capable of dynamically re-configuring itself to find the shortest path, when the topology undergoes a change.
+An SDN controller tool built using Floodlight, configured to ensure shortest-path routing which works with different types of network topologies. This implementation is tested using the Mininet network emulator, which is designed to emulate various topologies containing OpenFlow switches, each of which connect to an OpenFlow network controller. This SDN implementation works successfully with various network topologies, and is also capable of dynamically re-configuring itself to find the shortest path, when the topology undergoes a change.
 
 The shortest path algorithm used for this project is Djikstra's shortest path algorithm. I used the implementation provided by Baeldung: https://www.baeldung.com/java-dijkstra to compute shortest paths, which provides a very useful API for defining nodes and connections in a graph.
+
+This project was done as a part of the course CS557: Advanced Networking, at Colorado State University, during the Fall of 2018.
 
 A brief description of what some of the functions implemented in the ShortestPathSwitching.java file do:
 
@@ -88,28 +24,94 @@ A brief description of what some of the functions implemented in the ShortestPat
 
 5. linkDiscovery(): Same procedure as in step 4. The entire topology gets updated, in case a link is changed.
 
+The various topology types, and their description are provided <a href = "https://github.com/vignesh-pagadala/sdn-controller-shortest-path-routing/blob/main/assets/SDN-Brown.pdf">here</a>.  Sample output from the flow tables of some switched are provided below, with respective switch numbers:
+
+### Switch Flow Tables - Sample Output
+
+#### Someloops Topology: Static Case
+
+1. Someloops - S1
+
+mininet@mininet-VirtualBox:~/openflow$ sudo ovs-ofctl dump-flows s1 -O OpenFlow13
+OFPST_FLOW reply (OF1.3) (xid=0x2):
+ cookie=0x0, duration=9.678s, table=0, n_packets=2, n_bytes=196, priority=1,ip,dl_dst=00:00:00:00:00:03 actions=output:3
+ cookie=0x0, duration=9.688s, table=0, n_packets=6, n_bytes=588, priority=1,ip,dl_dst=00:00:00:00:00:01 actions=output:1
+ cookie=0x0, duration=9.722s, table=0, n_packets=2, n_bytes=196, priority=1,ip,dl_dst=00:00:00:00:00:04 actions=output:3
+ cookie=0x0, duration=9.726s, table=0, n_packets=2, n_bytes=196, priority=1,ip,dl_dst=00:00:00:00:00:02 actions=output:2
+ 
+2. Someloops - S6
+
+mininet@mininet-VirtualBox:~/openflow$ sudo ovs-ofctl dump-flows s6 -O OpenFlow13
+OFPST_FLOW reply (OF1.3) (xid=0x2):
+ cookie=0x0, duration=41.566s, table=0, n_packets=4, n_bytes=392, priority=1,ip,dl_dst=00:00:00:00:00:03 actions=output:3
+ cookie=0x0, duration=41.594s, table=0, n_packets=4, n_bytes=392, priority=1,ip,dl_dst=00:00:00:00:00:01 actions=output:4
+ cookie=0x0, duration=41.597s, table=0, n_packets=6, n_bytes=588, priority=1,ip,dl_dst=00:00:00:00:00:04 actions=output:1
+ cookie=0x0, duration=41.602s, table=0, n_packets=2, n_bytes=196, priority=1,ip,dl_dst=00:00:00:00:00:02 actions=output:3
+
+#### Someloops Topology: Dynamic Case
+
+1. Someloops - S4 - link between S4 and H3 is down
+
+mininet@mininet-VirtualBox:~/openflow$ sudo ovs-ofctl dump-flows s4 -O OpenFlow13
+OFPST_FLOW reply (OF1.3) (xid=0x2):
+ cookie=0x0, duration=8.903s, table=0, n_packets=2, n_bytes=196, priority=1,ip,dl_dst=00:00:00:00:00:01 actions=output:4
+ cookie=0x0, duration=8.905s, table=0, n_packets=4, n_bytes=392, priority=1,ip,dl_dst=00:00:00:00:00:04 actions=output:4
+ cookie=0x0, duration=8.906s, table=0, n_packets=4, n_bytes=392, priority=1,ip,dl_dst=00:00:00:00:00:02 actions=output:3
+
+2. Someloops - S4 - link between S4 and H3 is up again
+
+mininet@mininet-VirtualBox:~/openflow$ sudo ovs-ofctl dump-flows s4 -O OpenFlow13
+OFPST_FLOW reply (OF1.3) (xid=0x2):
+ cookie=0x0, duration=2.369s, table=0, n_packets=0, n_bytes=0, priority=1,ip,dl_dst=00:00:00:00:00:03 actions=output:1
+ cookie=0x0, duration=2.552s, table=0, n_packets=2, n_bytes=196, priority=1,ip,dl_dst=00:00:00:00:00:01 actions=output:4
+ cookie=0x0, duration=2.552s, table=0, n_packets=4, n_bytes=392, priority=1,ip,dl_dst=00:00:00:00:00:04 actions=output:4
+ cookie=0x0, duration=2.552s, table=0, n_packets=4, n_bytes=392, priority=1,ip,dl_dst=00:00:00:00:00:02 actions=output:3
+
 ### Built With
 
-> **[?]**
-> Please provide the technologies that are used in the project.
+1. Floodlight: https://projectfloodlight.org
+2. OpenFlow 1.0: https://www.opennetworking.org/sdn-resources/onf-specifications/openflow
+3. Java 8: https://www.oracle.com/java/technologies/java8.html
 
 ## Getting Started
 
 ### Prerequisites
 
-> **[?]**
-> What are the project requirements/dependencies?
+1. Java 8: https://www.oracle.com/java/technologies/java8.html
+2. Python 3: https://www.anaconda.com/products/individual
+3. Mininet: https://mininet.org
+4. Floodlight: https://projectfloodlight.org
+5. OpenFlow 1.0: https://www.opennetworking.org/sdn-resources/onf-specifications/openflow
+6. VirtualBox: https://www.virtualbox.org/wiki/Downloads
 
 ### Installation
 
-> **[?]**
-> Proceed to describe how to install and get started with the project.
+1. Ensure all the above-mentioned prerequisites are met.
+2. Clone the GitHub repo:
+
+`git clone https://github.com/vignesh-pagadala/sdn-controller-shortest-path-routing.git`.
+
+3. Download the Virtualbox files from here: "google drive link".
+4. Set up the Virtual machine in Virtualbox and boot it up.
+5. Open up a terminal. Compile application using:
+
+`cd ~/openflow`
+
+`ant`
 
 ## Usage
 
-> **[?]**
-> How does one go about using it?
-> Provide various use cases and code examples here.
+1. Start Floodlight:
+
+`java -jar FloodlightWithApps.jar -cf shortestPathSwitching.prop`
+
+2. Start Mininet:
+
+`sudo ./run_mininet.py single,3`
+
+The above command creates a topology with three hosts and one switch. More info regarding this can be found at <a href = "https://github.com/vignesh-pagadala/sdn-controller-shortest-path-routing/blob/main/assets/SDN-Brown.pdf">this</a> document.
+
+3. Various commands can now be run to test the routing algorithm. For example 'ping'. The initial ping will get dropped, as the rules would not have been configured yet, but after that, the rules will be in place, and the ping will successfully follow the shortest-path route.
 
 ## Roadmap
 
@@ -120,9 +122,6 @@ See the [open issues](https://github.com/vignesh-pagadala/sdn-controller-shortes
 - [Newest Bugs](https://github.com/vignesh-pagadala/sdn-controller-shortest-path-routing/issues?q=is%3Aopen+is%3Aissue+label%3Abug)
 
 ## Support
-
-> **[?]**
-> Provide additional ways to contact the project maintainer/maintainers.
 
 Reach out to the maintainer at one of the following places:
 
@@ -168,6 +167,5 @@ See [LICENSE](LICENSE) for more information.
 
 ## Acknowledgements
 
-> **[?]**
-> If your work was funded by any organization or institution, acknowledge their support here.
-> In addition, if your work relies on other software libraries, or was inspired by looking at other work, it is appropriate to acknowledge this intellectual debt too.
+1. Dr. Joseph Gersch (Joe.Gersch@ColoState.Edu), for being an amazing course instructor, and providing us the opprtunity to work on such an amazing project.
+2. Baeldung (https://www.baeldung.com/java-dijkstra): Used their code to implement Djikstra's in the switches.
