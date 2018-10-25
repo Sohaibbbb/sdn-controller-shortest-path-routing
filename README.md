@@ -1,12 +1,7 @@
 # SDN Controller Shortest-Path Routing
 
-	
-	
-CS557, Fall 2018 - Project 1: Software Defined Networking
----------------------------------------------------------
-* by Vignesh M. Pagadala
-* Vignesh.Pagadala@colostate.edu
---------------------------------
+A Software-Defined Networking (SDN) controller which implements shortest-path routing in a packet-switched network.
+
 
 i) How Far I Got
 ----------------
@@ -73,24 +68,25 @@ OFPST_FLOW reply (OF1.3) (xid=0x2):
  cookie=0x0, duration=2.552s, table=0, n_packets=4, n_bytes=392, priority=1,ip,dl_dst=00:00:00:00:00:04 actions=output:4
  cookie=0x0, duration=2.552s, table=0, n_packets=4, n_bytes=392, priority=1,ip,dl_dst=00:00:00:00:00:02 actions=output:3
 
-
-> **[?]** 
-> Provide short description for your project here.
-
-
-
 ---
 
 ## About
 
-> **[?]**
-> Provide general information about your project here.
-> What problem does it (intend to) solve?
-> What is the purpose of your project?
-> Why did you undertake it?
-> You don't have to answer all the questions - just the ones relevant to your project.
+An SDN controller tool built using Floodlight, programmed to ensure shortest-path routing which works with different types of network topologies. This implementation is tested using the Mininet network emulator, which is designed to emulate various topologies containing OpenFlow switches, each of which connect to an OpenFlow network controller. This SDN implementation works successfully with various network topologies, and is also capable of dynamically re-configuring itself to find the shortest path, when the topology undergoes a change.
 
+The shortest path algorithm used for this project is Djikstra's shortest path algorithm. I used the implementation provided by Baeldung: https://www.baeldung.com/java-dijkstra to compute shortest paths, which provides a very useful API for defining nodes and connections in a graph.
 
+A brief description of what some of the functions implemented in the ShortestPathSwitching.java file do:
+
+1. deviceAdded(): I initially get the newly added host's information, and iterate through all switches, computing the shortest path to get to this host's switch, in each case. I had to 'translate' the node information in the controller, to make it compatible with the interface of Baeldung's Dijkstra implementation. And for each switch, I used the obtained shortest path information to know what the optimal 'next-hop' switch was. After this, I simply added a rule with the host's MAC address (as the matching criteria) and the port through which the current switch is connected to the next-hop switch (as the action).
+
+2. deviceRemoved(): I iterate through each switch, removing the rule associated with the host (which got removed).
+
+3. deviceMoved(): I perform the same procedure as in 1, updating the route in each node for the moved device.
+
+4. switchRemoved(): Here, I update the entire topology, after a switch is removed. I iterate through each host, and follow step 1 for each host.
+
+5. linkDiscovery(): Same procedure as in step 4. The entire topology gets updated, in case a link is changed.
 
 ### Built With
 
