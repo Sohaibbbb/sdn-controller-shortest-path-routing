@@ -89,27 +89,27 @@ OFPST_FLOW reply (OF1.3) (xid=0x2):
 1. Ensure all the above-mentioned prerequisites are met.
 2. Clone the GitHub repo:
 
-`git clone https://github.com/vignesh-pagadala/sdn-controller-shortest-path-routing.git`.
+    `git clone https://github.com/vignesh-pagadala/sdn-controller-shortest-path-routing.git`.
 
 3. Download the Virtualbox .ova file from <a href = "https://drive.google.com/drive/folders/1zdoxMkhPzJ7dYGt-NbncSo8QyT5Npnhm?usp=sharing">here</a>.
 4. Set up the Virtual machine in Virtualbox and boot it up.
 5. Open up a terminal. Compile application using:
 
-`cd ~/openflow`
+    `cd ~/openflow`
 
-`ant`
+    `ant`
 
 ## Usage
 
 1. Start Floodlight:
 
-`java -jar FloodlightWithApps.jar -cf shortestPathSwitching.prop`
+    `java -jar FloodlightWithApps.jar -cf shortestPathSwitching.prop`
 
 2. Start Mininet:
 
-`sudo ./run_mininet.py single,3`
+    `sudo ./run_mininet.py single,3`
 
-The above command creates a topology with three hosts and one switch. More info regarding this can be found at <a href = "https://github.com/vignesh-pagadala/sdn-controller-shortest-path-routing/blob/main/assets/SDN-Brown.pdf">this</a> document.
+    The above command creates a topology with three hosts and one switch. More info regarding this can be found at <a href = "https://github.com/vignesh-pagadala/sdn-controller-shortest-path-routing/blob/main/assets/SDN-Brown.pdf">this</a> document.
 
 3. Various commands can now be run to test the routing algorithm. For example 'ping'. The initial ping will get dropped, as the rules would not have been configured yet, but after that, the rules will be in place, and the ping will successfully follow the shortest-path route.
 
