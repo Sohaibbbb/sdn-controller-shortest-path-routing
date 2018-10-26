@@ -91,7 +91,7 @@ OFPST_FLOW reply (OF1.3) (xid=0x2):
 
 `git clone https://github.com/vignesh-pagadala/sdn-controller-shortest-path-routing.git`.
 
-3. Download the Virtualbox files from here: "google drive link".
+3. Download the Virtualbox .ova file from <a href = "https://drive.google.com/drive/folders/1zdoxMkhPzJ7dYGt-NbncSo8QyT5Npnhm?usp=sharing">here</a>.
 4. Set up the Virtual machine in Virtualbox and boot it up.
 5. Open up a terminal. Compile application using:
 
